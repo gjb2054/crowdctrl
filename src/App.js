@@ -60,7 +60,7 @@ function App({ signOut }) {
 		if (!email) email = userEmail ?? user?.attributes?.email;
 
     // Queries data store for all video reports associated with the email.
-		const reports = await DataStore.query(VideoReport, (report) => report.userEmail('contains', email))
+		const reports = await DataStore.query(VideoReport, (report) => report.userEmail.contains(email))
 
     // Sets Reports and logs them
 		setReports(reports);
