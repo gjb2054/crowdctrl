@@ -1,0 +1,12 @@
+{
+  "AppSyncApiName": "crowdctrldb",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authcrowdctrldfe40931",
+      "Outputs.UserPoolId"
+    ]
+  },
+  "AuthModeLastUpdated": "2023-04-28T03:02:55.355Z"
+}

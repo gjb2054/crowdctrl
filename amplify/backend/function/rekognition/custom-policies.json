@@ -1,0 +1,47 @@
+[
+  {
+    "Effect": "Allow",
+    "Action": [
+      "s3:*",
+      "s3-object-lambda:*"
+    ],
+    "Resource": ["*"]
+  },
+  {
+    "Effect": "Allow",
+    "Action": [
+        "rekognition:*"
+    ],
+    "Resource": ["*"]
+  },
+  {
+    "Effect": "Allow",
+    "Action": [
+      "sns:*"
+    ],
+    "Resource": ["*"]
+  },
+  {
+    "Effect": "Allow",
+    "Action": [
+        "kms:ListAliases",
+        "iam:GetPolicy",
+        "iam:GetPolicyVersion",
+        "iam:GetRole",
+        "iam:GetRolePolicy",
+        "iam:ListAttachedRolePolicies",
+        "iam:ListRolePolicies",
+        "iam:ListRoles",
+        "lambda:*",
+        "tag:GetResources",
+        "xray:GetTraceSummaries",
+        "xray:BatchGetTraces"
+    ],
+    "Resource": ["*"]
+  },
+  {
+    "Effect": "Allow",
+    "Action": ["iam:PassRole"],
+    "Resource": ["*"]
+  }
+]

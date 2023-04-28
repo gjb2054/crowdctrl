@@ -1,0 +1,12 @@
+{
+  "lambdaLayers": [],
+  "permissions": {
+    "api": {
+      "crowdctrldb": [
+        "Query",
+        "Mutation",
+        "Subscription"
+      ]
+    }
+  }
+}

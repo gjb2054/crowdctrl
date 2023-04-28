@@ -1,0 +1,210 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Lambda Function resource stack creation using Amplify CLI",
+    "Parameters": {
+        "CloudWatchRule": {
+            "Type": "String",
+            "Default" : "NONE",
+            "Description" : " Schedule Expression"
+        },
+        "deploymentBucketName": {
+            "Type": "String"
+        },
+        "env": {
+            "Type": "String"
+        },
+        "s3Key": {
+            "Type": "String"
+        }
+        ,
+    
+    
+    
+        "functionclipGeneratorName": {
+            "Type": "String",
+            "Default": "functionclipGeneratorName"
+            },
+        
+    
+        
+    
+        "apicrowdctrldbGraphQLAPIIdOutput": {
+            "Type": "String",
+            "Default": "apicrowdctrldbGraphQLAPIIdOutput"
+            },
+        
+        "apicrowdctrldbGraphQLAPIEndpointOutput": {
+            "Type": "String",
+            "Default": "apicrowdctrldbGraphQLAPIEndpointOutput"
+            },
+        
+        "apicrowdctrldbGraphQLAPIKeyOutput": {
+            "Type": "String",
+            "Default": "apicrowdctrldbGraphQLAPIKeyOutput"
+            },
+        
+    
+        
+    
+        "storages3340a859dBucketName": {
+            "Type": "String",
+            "Default": "storages3340a859dBucketName"
+            }
+        
+    
+        
+    
+    },
+    "Conditions": {
+        "ShouldNotCreateEnvResources": {
+            "Fn::Equals": [
+                {
+                    "Ref": "env"
+                },
+                "NONE"
+            ]
+        }
+    },
+    "Resources": {
+        "LambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Metadata": {
+            "aws:asset:path": "./src",
+            "aws:asset:property": "Code"
+          },
+          "Properties": {
+            "Code": {
+                "S3Bucket": {
+                    "Ref": "deploymentBucketName"
+                },
+                "S3Key": {
+                    "Ref": "s3Key"
+                }
+            },
+            "Handler": "index.handler",
+            "FunctionName": {
+                "Fn::If": [
+                    "ShouldNotCreateEnvResources",
+                    "streamclipgenerator",
+                    {
+
+                        "Fn::Join": [
+                            "",
+                            [
+                                "streamclipgenerator",
+                                "-",
+                                {
+                                    "Ref": "env"
+                                }
+                            ]
+                        ]
+                    }
+                ]
+            },
+            "Environment": {
+                "Variables" : {"ENV":{"Ref":"env"},"REGION":{"Ref":"AWS::Region"},"FUNCTION_CLIPGENERATOR_NAME":{"Ref":"functionclipGeneratorName"},"API_CROWDCTRLDB_GRAPHQLAPIIDOUTPUT":{"Ref":"apicrowdctrldbGraphQLAPIIdOutput"},"API_CROWDCTRLDB_GRAPHQLAPIENDPOINTOUTPUT":{"Ref":"apicrowdctrldbGraphQLAPIEndpointOutput"},"API_CROWDCTRLDB_GRAPHQLAPIKEYOUTPUT":{"Ref":"apicrowdctrldbGraphQLAPIKeyOutput"},"STORAGE_S3340A859D_BUCKETNAME":{"Ref":"storages3340a859dBucketName"}}
+            },
+            "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"] },
+            "Runtime": "nodejs16.x",
+            "Layers": [],
+            "Timeout": 200
+          }
+        },
+        "LambdaExecutionRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "RoleName": {
+                    "Fn::If": [
+                        "ShouldNotCreateEnvResources",
+                        "crowdctrlLambdaRole644984dc",
+                        {
+
+                            "Fn::Join": [
+                                "",
+                                [
+                                    "crowdctrlLambdaRole644984dc",
+                                    "-",
+                                    {
+                                        "Ref": "env"
+                                    }
+                                ]
+                            ]
+                        }
+                    ]
+                },
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+        ,"lambdaexecutionpolicy": {
+            "DependsOn": ["LambdaExecutionRole"],
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "lambda-execution-policy",
+                "Roles": [{ "Ref": "LambdaExecutionRole" }],
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": ["logs:CreateLogGroup",
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents"],
+                            "Resource": { "Fn::Sub": [ "arn:aws:logs:${region}:${account}:log-group:/aws/lambda/${lambda}:log-stream:*", { "region": {"Ref": "AWS::Region"}, "account": {"Ref": "AWS::AccountId"}, "lambda": {"Ref": "LambdaFunction"}} ]}
+                        }
+                    ]
+                }
+            }
+        }
+        ,"AmplifyResourcesPolicy": {
+            "DependsOn": ["LambdaExecutionRole"],
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "amplify-lambda-execution-policy",
+                "Roles": [{ "Ref": "LambdaExecutionRole" }],
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [{"Effect":"Allow","Action":["lambda:Create*","lambda:Put*","lambda:Add*","lambda:Get*","lambda:List*","lambda:Invoke*","lambda:Update*","lambda:Delete*","lambda:Remove*"],"Resource":[{"Fn::Join":["",["arn:aws:lambda:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":function:",{"Ref":"functionclipGeneratorName"}]]}]},{"Effect":"Allow","Action":["appsync:GraphQL"],"Resource":[{"Fn::Join":["",["arn:aws:appsync:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":apis/",{"Ref":"apicrowdctrldbGraphQLAPIIdOutput"},"/types/Query/*"]]},{"Fn::Join":["",["arn:aws:appsync:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":apis/",{"Ref":"apicrowdctrldbGraphQLAPIIdOutput"},"/types/Mutation/*"]]},{"Fn::Join":["",["arn:aws:appsync:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":apis/",{"Ref":"apicrowdctrldbGraphQLAPIIdOutput"},"/types/Subscription/*"]]}]},{"Effect":"Allow","Action":"s3:ListBucket","Resource":[{"Fn::Join":["",["arn:aws:s3:::",{"Ref":"storages3340a859dBucketName"}]]}]},{"Effect":"Allow","Action":["s3:PutObject","s3:GetObject","s3:DeleteObject"],"Resource":[{"Fn::Join":["",["arn:aws:s3:::",{"Ref":"storages3340a859dBucketName"},"/*"]]}]}]
+                }
+            }
+        }
+        
+        
+        
+    },
+    "Outputs": {
+        "Name": {
+            "Value": {
+                "Ref": "LambdaFunction"
+            }
+        },
+        "Arn": {
+            "Value": {"Fn::GetAtt": ["LambdaFunction", "Arn"]}
+        },
+        "Region": {
+            "Value": {
+                "Ref": "AWS::Region"
+            }
+        },
+        "LambdaExecutionRole": {
+            "Value": {
+                "Ref": "LambdaExecutionRole"
+            }
+        }
+        
+    }
+}

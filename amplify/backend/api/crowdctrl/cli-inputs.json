@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "paths": {
+    "/rekognition": {
+      "name": "/rekognition",
+      "lambdaFunction": "rekognition",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/createTopic": {
+      "name": "/createTopic",
+      "lambdaFunction": "createTopic",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/uploadStream": {
+      "name": "/uploadStream",
+      "lambdaFunction": "streamupload",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/clipStreams": {
+      "name": "/clipStreams",
+      "lambdaFunction": "streamclipgenerator",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/poll": {
+      "name": "/poll",
+      "lambdaFunction": "polling",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

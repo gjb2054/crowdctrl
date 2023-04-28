@@ -1,0 +1,12 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+
+type VideoReport @model @auth(rules: [{ allow: public},{ allow: owner }]) {
+  userEmail: String!
+  peopleCount: [Int]
+  tag: String
+  videoUrls: [String]
+  streamUrl: String
+  topicArn: String
+  jobIds: [String]
+}
