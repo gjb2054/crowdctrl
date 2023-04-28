@@ -16,7 +16,7 @@ import { AiOutlinePaperClip } from "react-icons/ai";
 import React from "react";
 import NavBar from "./Components/NavBar.js";
 import "./App.css";
-import { API, Auth, Storage, DataStore } from "aws-amplify";
+import { API, Auth, Storage, DataStore, Predicates } from "aws-amplify";
 import { useState, useEffect } from "react";
 import { VideoReport } from "./models";
 import awsconfig from "./aws-exports";
@@ -60,7 +60,7 @@ function App({ signOut }) {
 		if (!email) email = userEmail ?? user?.attributes?.email;
 
     // Queries data store for all video reports associated with the email.
-		const reports = await DataStore.query(VideoReport, (report) => true)
+		const reports = await DataStore.query(VideoReport, Predicates.ALL)
 
     // Sets Reports and logs them
 		setReports(reports);
